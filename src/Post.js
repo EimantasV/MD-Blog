@@ -1,11 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useToken } from './TokenProvider';
+import axios from 'axios';
 
 const Form = () => {
+  const { token } = useToken();
   const [formData, setFormData] = useState({
     username: '',
     description: '',
     content: '',
   });
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Make an authenticated API request using the token
+    const config = {
+      headers: {
+        Authorization: token,
+      },
+    };
+
+    axios.get('/api/protected-route', config)
+      .then((response) => {
+        setData(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
+  }, [token]); // The effect depends on the token
+
+
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +65,10 @@ const Form = () => {
       console.error('Error:', error);
     }
   };
+  if(loading)
+  {
+    return <h1>Loading...</h1>
+  }
 
   return (
     <form onSubmit={handleSubmit}>
