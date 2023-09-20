@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useToken } from './TokenProvider';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
     const { setToken } = useToken();
@@ -36,6 +36,7 @@ function Login() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>Login</button>
+      {/* <Link to='/register'><button>Register</button></Link> */}
     </div>
   );
 }

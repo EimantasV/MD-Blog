@@ -1,48 +1,45 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router-dom';
 const Form = () => {
-    const [data, setData] = useState({});
+    const [data, setData] = useState(false);
     const params = useParams();
-    useEffect(async () => {
 
-        try {
-
-            const response = await fetch(`/api/md/${params.id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.ok) {
-                // Handle success (e.g., show a success message)
-                // setSubmitted(true);
+    useEffect(() => {
+        console.log(params);
 
 
-                // console.log(response);
-                const re = await response.json();
-                // console.log(re);
-                setData(re);
-            } else {
-                // Handle errors (e.g., show an error message)
-                console.error('Failed getting post! :(');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        axios.get(`/api/md/${params.id}`, 
+        {
+            headers: {
+                'Content-Type': 'application/json',
+            },
         }
+        )
+        .then((response) => {
+          console.log(response.data);
+          setData(response.data);
+        })
+        .catch((error) => {
+            console.error('Failed getting post! :(');
+            setData(false);
+        });
+
 
     }, [])
 
 
-
+    if(!data)
+    {
+        return <div><h1>404</h1></div>
+    }
 
     return (
         <div>
-            <h1>gsgds</h1>
-        <ReactMarkdown>{data.content}</ReactMarkdown>
-    </div>
-  );
+            <ReactMarkdown>{data.content}</ReactMarkdown>
+        </div>
+    );
 };
 
 export default Form;

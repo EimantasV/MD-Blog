@@ -5,7 +5,7 @@ const secretKey = 'P5j^2b4L$ZuV7#s@G!9wQ'; // Replace with your actual secret ke
 function authenticateToken(req, res, next) {
   // Get the token from the request headers or other sources
   const token = req.header('Authorization');
-    console.log(req, token);
+    //  console.log( token);
   if (!token) {
     return res.status(401).json({ message: 'Authentication failed. Token missing.' });
   }
@@ -22,7 +22,7 @@ function authenticateToken(req, res, next) {
 
     // You can also attach the decoded data to the request object for later use
     req.user = decoded;
-
+    //  console.log(decoded);
     // Continue processing the request
     next();
   });
