@@ -4,10 +4,10 @@ import axios from 'axios';
 
 import { useNavigate } from 'react-router-dom';
 
-const Form = () => {
-  const navigate = useNavigate();
-  const { token } = useToken();
-  const [formData, setFormData] = useState({
+  Form = () => {
+  var navigate = useNavigate();
+  const { login } = useToken();
+  const [form_data, setform_data] = useState({
     username: '',
     description: '',
     content: '',
@@ -16,10 +16,10 @@ const Form = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Make an authenticated API request using the token
+    // Make an authenticated API request using the login
     const config = {
       headers: {
-        Authorization: token,
+        Authorization: login,
       },
     };
 
@@ -33,7 +33,7 @@ const Form = () => {
         setLoading(false);
         navigate('/login');
       });
-  }, [token]);
+  }, [login]);
 
 
 
@@ -41,7 +41,7 @@ const Form = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setform_data({ ...form_data, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -49,12 +49,12 @@ const Form = () => {
 
 
     axios.post('/api/submit-form',{
-      ...formData
+      ...form_data
     },
     {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token,
+        'Authorization': login,
       },
     }).then(response=>{
       navigate(`/blog/${response.data._id}`);
@@ -80,7 +80,7 @@ const Form = () => {
           type="text"
           id="title"
           name="title"
-          value={formData.title}
+          value={form_data.title}
           onChange={handleChange}
         />
       </div>
@@ -89,7 +89,7 @@ const Form = () => {
         <textarea
           id="description"
           name="description"
-          value={formData.description}
+          value={form_data.description}
           onChange={handleChange}
         />
       </div>
@@ -98,7 +98,7 @@ const Form = () => {
         <textarea
           id="content"
           name="content"
-          value={formData.content}
+          value={form_data.content}
           onChange={handleChange}
           rows="6" // Adjust the number of rows as needed
         />
