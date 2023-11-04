@@ -8,7 +8,7 @@ function App() {
   navigate = useNavigate();
   const { token } = useToken();
   const [posts, setPosts] = useState([]);
-  const [elements, setElements] = useState([]);
+  const [elements, SetElements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(true);
 
@@ -64,7 +64,7 @@ function App() {
       console.log(a)
       temp.push(<div><Link to={`/blog/${a._id}`}><h2>{a.title}</h2><p>{a.description}</p></Link><button onClick={()=>handleDelete(a._id)}>Delete</button><button>Edit</button><hr /></div>)
     }
-    setElements(temp);
+    SetElements(temp);
     // console.log(elements)
   }, [posts]);
 
