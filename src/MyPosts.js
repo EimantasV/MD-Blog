@@ -3,6 +3,7 @@ import './App.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useToken } from './TokenProvider';
+import handleDelete from './handleDelete';
 
 function App() {
   const navigate = useNavigate();
@@ -32,30 +33,30 @@ function App() {
 
   }, [refresh]);
 
-  const handleDelete = async (id) => {
+  // const handleDelete = async (id) => {
 
 
-    axios.delete('/api/delete-post',
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-        'id':id
-      },
-    })
+  //   axios.delete('/api/delete-post',
+  //   {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': token,
+  //       'id':id
+  //     },
+  //   })
     
-    .then(response=>{
-      console.log(response);
-      setRefresh(!refresh);
-      // navigate(`/myposts`);
-    })
+  //   .then(response=>{
+  //     console.log(response);
+  //     setRefresh(!refresh);
+  //     // navigate(`/myposts`);
+  //   })
     
-    .catch(error=>{
-      console.error('Error:', error);
-    })
+  //   .catch(error=>{
+  //     console.error('Error:', error);
+  //   })
 
 
-  };
+  // };
 
 
   useEffect(() => {
