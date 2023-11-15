@@ -49,55 +49,128 @@ app.get('/api/protected-route', authenticateToken, (req, res) => {
   res.json({ message: 'Access granted for user ' + username });
 });
 
+// 3 UZDUOTIS:
+
+// app.post('/api/login', async (req, res) => {
+//   const { username, password } = req.body;
+//   // console.log(username, password);
+//   try {
+//     const user = await User.findOne({ username: username });
+
+//     if (!user) {
+//       return { success: false, message: 'User not found' };
+//     }
+
+//     const passwordMatch = await bcrypt.compare(password, user.password);
+
+//     if (passwordMatch) {
+//       console.log(username, "OK")
+//       const token = jwt.sign({ username: user.username }, 'P5j^2b4L$ZuV7#s@G!9wQ');
+//       // console.log(token)
+//       return res.json({ token: token });
+//     } else {
+//       return res.json({ success: false, message: 'Incorrect password' });
+//     }
+//   } catch (error) {
+//     return res.json({ success: false, message: 'Internal Server Error' });
+//   }
+// });
+
+async function loginLogic(req, res)
+{  
+  const { username, password } = req.body;
+  const user = await User.findOne({ username: username });
+  if (!user) 
+  {
+    res.json({ success: false, message: 'User not found' });
+    return;
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (passwordMatch) 
+  {
+    const token = jwt.sign({ username: user.username }, 'P5j^2b4L$ZuV7#s@G!9wQ');
+
+    res.json({ token: token });
+    return;
+  } 
+
+  res.json({ success: false, message: 'Incorrect password' });
+  
+}
 
 app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body;
-  // console.log(username, password);
   try {
-    const user = await User.findOne({ username: username });
-
-    if (!user) {
-      return { success: false, message: 'User not found' };
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (passwordMatch) {
-      console.log(username, "OK")
-      const token = jwt.sign({ username: user.username }, 'P5j^2b4L$ZuV7#s@G!9wQ');
-      // console.log(token)
-      return res.json({ token: token });
-    } else {
-      return { success: false, message: 'Incorrect password' };
-    }
-  } catch (error) {
-    return { success: false, message: 'Internal Server Error' };
+    await loginLogic(req, res)
+  } 
+  catch (error) 
+  {
+    res.json({ success: false, message: 'Internal Server Error' });
+    return;
   }
 });
+
+// 3 UZDUOTIS:
+
+// app.delete("/api/delete-post", authenticateToken, async (req, res) => {
+//   const id = req.header('id');
+//   try {
+//     // Find the post by ID and delete it
+//     const post = await MDPost.findById(id);
+//     console.log("Deleting! Post creator:",post.username,", Delete called by:", req.user.username );
+//     if (post.username != req.user.username) {
+//       return res.status(403).json({ message: 'Authentication failed. Invalid token.' });
+//     }
+
+//     const deletedPost = await MDPost.findByIdAndDelete(id);
+
+//     if (!deletedPost) {
+//       return res.status(404).json({ message: 'Post not found' });
+//     }
+
+//     return res.json({ message: 'Post deleted successfully' });
+//   } catch (error) {
+//     console.error('Error deleting post:', error);
+//     return res.status(500).json({ message: 'Server error' });
+//   }
+// })
+
+async function deletePost(req, res)
+{
+      // Find the post by ID and delete it
+      const post = await MDPost.findById(id);
+      console.log("Deleting! Post creator:", post.username, ", Delete called by:", req.user.username);
+      if (post.username != req.user.username) 
+      {
+        res.status(403).json({ message: 'Authentication failed. Invalid token.' });
+        return;
+      }
+  
+      const deletedPost = await MDPost.findByIdAndDelete(id);
+  
+      if (!deletedPost) {
+        res.status(404).json({ message: 'Post not found' });
+        return;
+      }
+  
+      res.json({ message: 'Post deleted successfully' });
+}
 
 
 app.delete("/api/delete-post", authenticateToken, async (req, res) => {
   const id = req.header('id');
   try {
-    // Find the post by ID and delete it
-    const post = await MDPost.findById(id);
-    console.log("Deleting! Post creator:",post.username,", Delete called by:", req.user.username );
-    if (post.username != req.user.username) {
-      return res.status(403).json({ message: 'Authentication failed. Invalid token.' });
-    }
-
-    const deletedPost = await MDPost.findByIdAndDelete(id);
-
-    if (!deletedPost) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    return res.json({ message: 'Post deleted successfully' });
-  } catch (error) {
+    deletePost(req, res)
+  } 
+  catch (error) 
+  {
     console.error('Error deleting post:', error);
-    return res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 })
+
+// TOLIAU NEKEISTA:
 
 app.get("/api/posts", async (req, res) => {
   try {
@@ -117,24 +190,25 @@ app.get("/api/myposts", authenticateToken, async (req, res) => {
   try {
     // Fetch all posts from the database
     const posts = await MDPost.find({ username: name }, "title username description");
-
     // Send the username and description of all posts as JSON
     res.json(posts);
+    return;
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Error fetching posts" });
+    return;
   }
 });
 
 
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
-  // console.log(username, password);
   // Check if the username is already taken
   try {
     const existingUser = await User.findOne({ username: username });
     if (existingUser) {
-      return res.status(400).json({ message: 'Username already taken' });
+      res.status(400).json({ message: 'Username already taken' });
+      return; 
     }
 
 
@@ -146,10 +220,13 @@ app.post('/api/register', async (req, res) => {
     });
 
     await newUser.save();
-    return res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({ message: 'User registered successfully' });
+    return;
   }
   catch (err) {
-    return res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Internal Server Error' });
+    return; 
+
   }
 });
 

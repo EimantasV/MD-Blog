@@ -3,13 +3,12 @@ import './App.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useToken } from './TokenProvider';
-import handleDelete from './handleDelete';
 
 function App() {
-  const navigate = useNavigate();
+  navigate = useNavigate();
   const { token } = useToken();
   const [posts, setPosts] = useState([]);
-  const [elements, setElements] = useState([]);
+  const [elements, SetElements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(true);
 
@@ -33,30 +32,30 @@ function App() {
 
   }, [refresh]);
 
-  // const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
 
 
-  //   axios.delete('/api/delete-post',
-  //   {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': token,
-  //       'id':id
-  //     },
-  //   })
+    axios.delete('/api/delete-post',
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+        'id':id
+      },
+    })
     
-  //   .then(response=>{
-  //     console.log(response);
-  //     setRefresh(!refresh);
-  //     // navigate(`/myposts`);
-  //   })
+    .then(response=>{
+      console.log(response);
+      setRefresh(!refresh);
+      // navigate(`/myposts`);
+    })
     
-  //   .catch(error=>{
-  //     console.error('Error:', error);
-  //   })
+    .catch(error=>{
+      console.error('Error:', error);
+    })
 
 
-  // };
+  };
 
 
   useEffect(() => {
@@ -65,7 +64,7 @@ function App() {
       console.log(a)
       temp.push(<div><Link to={`/blog/${a._id}`}><h2>{a.title}</h2><p>{a.description}</p></Link><button onClick={()=>handleDelete(a._id)}>Delete</button><button>Edit</button><hr /></div>)
     }
-    setElements(temp);
+    SetElements(temp);
     // console.log(elements)
   }, [posts]);
 
